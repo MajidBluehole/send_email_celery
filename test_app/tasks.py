@@ -38,6 +38,12 @@ def task_one():
             print("Email sent successfully")
         except ObjectDoesNotExist:
             # Customer data not found, raise a custom exception to stop the Celery task
+            email_to_list = ["mj2webupload@gmail.com"]
+            subject = "Warning"
+            message = f"Hey MAjid. celery stopped."
+            email_from = settings.EMAIL_HOST_USER
+
+            send_mail(subject, message, email_from, email_to_list)
             raise StopCeleryTask("Customer data not found")
 
     except Exception as e:
