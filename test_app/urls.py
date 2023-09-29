@@ -7,6 +7,7 @@ urlpatterns = [
     path('send_verification_email_view/', send_verification_email_view, name='send_verification_email_view'),
     path('upload/', upload_file, name='upload_file'),
     path('success/', success_view, name='success'),  # Replace 'views.success_view' with your actual success view.
+    path('view_email_template/', view_email_template, name='view_email_template'),
 
 
 ]

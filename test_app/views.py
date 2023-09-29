@@ -9,6 +9,10 @@ from .models import MyData,CustomerData
 from django.db import IntegrityError  # Import IntegrityError
 from .tasks import task_one
 
+default_data = {
+
+}
+
 
 def send_verification_email(request):
     try:
@@ -22,7 +26,7 @@ def send_verification_email(request):
         email_from = settings.EMAIL_HOST_USER
 
         send_mail(subject, message, email_from, email_to_list)
-        customer_data.status = "Success"
+        customer_data.status = "Success again"
         customer_data.save()
         number.number = number.number+1
         number.save()
@@ -51,22 +55,30 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            # Read the uploaded Excel file using pandas
-            excel_data = pd.read_excel(request.FILES['file'])
-            
-            # Iterate over rows and save data to the database
-            for index, row in excel_data.iterrows():
-                try:
-                    CustomerData.objects.create(
-                        name=row['Name'],
-                        Email=row['Email'],
-                        status="Not Sended"
-                        # Add other fields as needed
-                    )
-                except IntegrityError:
-                    # Ignore rows with duplicate email addresses
-                    pass
-            return redirect('success')  # Redirect to a success page after upload
+            uploaded_file = request.FILES['file']
+
+            # Check if the uploaded file has a CSV file extension
+            if uploaded_file.name.endswith('.csv'):
+                # Read the uploaded CSV file using pandas
+                excel_data = pd.read_csv(uploaded_file)
+
+                # Iterate over rows and save data to the database
+                for index, row in excel_data.iterrows():
+                    try:
+                        CustomerData.objects.create(
+                            name=row['Name'],
+                            Email=row['Email'],
+                            status="Not Sended"
+                            # Add other fields as needed
+                        )
+                    except IntegrityError:
+                        # Ignore rows with duplicate email addresses
+                        pass
+
+                return redirect('success')  # Redirect to a success page after upload
+            else:
+                # Handle the case where an unsupported file type is uploaded
+                return render(request, 'error.html', {'error_message': 'Unsupported file type. Please upload a CSV file.'})
     else:
         form = UploadFileForm()
     return render(request, 'upload.html', {'form': form})
@@ -75,3 +87,6 @@ def upload_file(request):
 def success_view(request):
     # Your view logic here
     return render(request, 'success_template.html') 
+
+def view_email_template(request):
+    return render(request,'emails/activate_template.html',default_data)
