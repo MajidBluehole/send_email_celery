@@ -146,5 +146,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
-EMAIL_HOST_USER = 'majid.vainavins@gmail.com'
-EMAIL_HOST_PASSWORD = 'kidcccixwzdtphzs'
+EMAIL_HOST_USER = 'infokickstartrocket@gmail.com'
+EMAIL_HOST_PASSWORD = 'mhwamwoyvufgmvho'
